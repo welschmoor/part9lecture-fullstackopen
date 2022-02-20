@@ -1,45 +1,37 @@
+// http://localhost:3003/bmi?height=180&weight=72.
 
-type Operation = 'multiply' | 'add' | 'divide';
+// ex9.4
+import express from 'express';
+const app = express();
 
-interface CalculatorValuesInterface {
-  a: number;
-  b: number;
-}
+app.get('/hello', (_req, res) => {
+  res.send('Hello Full Stack!');
+});
 
-
-const calculatorValues = (args: Array<string>): CalculatorValuesInterface => {
-  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
-    return { a: Number(args[2]), b: Number(args[3]) }
+// ex9.5
+app.get('/bmi', (req, res) => {
+  const { weight, height } = req.query
+  let bmi: number = 0
+  if (!isNaN(Number(weight)) && !isNaN(Number(height))) {
+    bmi = Number(weight) / (Number(height) * 0.01) ** 2;
+    let bmiString: string = ''
+    if (bmi > 30) {
+      bmiString = `you're fat`
+    } else {
+      bmiString = `you're not yet`
+    }
+    res.send({
+      weight: weight,
+      height: height,
+      bmi: bmiString,
+    })
   } else {
-    throw new Error("These were not numbers you have entered")
+    throw new Error("weight and height are not numbers")
   }
-}
+})
 
+const PORT = 3003;
 
-
-type Result = number
-const calculator = (a: number, b: number, operation: Operation): Result => {
-  if (operation === 'add') {
-    return a + b
-  } else if (operation === 'multiply') {
-    return a * b
-  } else if (operation === 'divide') {
-    if (b === 0) { throw new Error('ZeroDivisionError') }
-    return a / b
-  }
-  throw new Error('Operation is wrong')
-}
-
-try {
-  const { a, b } = calculatorValues(process.argv)
-  console.log("args", process.argv)
-  const result = calculator(a, b, 'add');
-  console.log(result)
-} catch (error: unknown) {
-  let errorMessage = 'Something went wrong.'
-  if (error instanceof Error) {
-    errorMessage += ` Error: ` + error.message
-  }
-  console.log(errorMessage)
-}
-
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

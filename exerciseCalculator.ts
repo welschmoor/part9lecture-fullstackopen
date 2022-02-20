@@ -1,4 +1,4 @@
-
+// ex9.2
 
 interface calculateExercisesReturn {
   numberOfDays: number
